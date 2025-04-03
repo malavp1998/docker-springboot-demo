@@ -1,3 +1,137 @@
+
+# Dockerizing a Spring Boot Application
+
+This guide covers the steps to containerize a Spring Boot application using Docker.
+
+## Prerequisites
+- Install [Docker](https://docs.docker.com/get-docker/)
+- Have a Spring Boot application ready
+- A [Docker Hub](https://hub.docker.com/) account (for pushing images)
+
+## 1. Create a `Dockerfile`
+
+Inside the root of your Spring Boot project, create a `Dockerfile`:
+
+```dockerfile
+# Use an official OpenJDK runtime as the base image
+FROM openjdk:17-jdk-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built JAR file into the container
+COPY target/my-spring-app.jar app.jar
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+## 2. Build the Docker Image
+
+Navigate to the project root directory and run:
+```sh
+docker build -t my-spring-app .
+```
+
+To verify the image:
+```sh
+docker images
+```
+Example output:
+```
+REPOSITORY         TAG       IMAGE ID       CREATED          SIZE
+my-spring-app     latest    abcdef123456   10 minutes ago   150MB
+```
+
+## 3. Run the Docker Container
+
+To start the container and map port 8080:
+```sh
+docker run -p 8080:8080 my-spring-app
+```
+
+Now, access your application at:
+```
+http://localhost:8080
+```
+
+To run the container in detached mode:
+```sh
+docker run -d -p 8080:8080 my-spring-app
+```
+
+To view running containers:
+```sh
+docker ps
+```
+
+## 4. Tag and Push to Docker Hub
+
+### Tag the Image
+```sh
+docker tag my-spring-app your-docker-hub-username/my-spring-app:v1.0
+```
+
+### Login to Docker Hub
+```sh
+docker login
+```
+
+### Push the Image
+```sh
+docker push your-docker-hub-username/my-spring-app:v1.0
+```
+
+## 5. Pull the Image from Docker Hub
+
+On another machine or server, pull the image:
+```sh
+docker pull your-docker-hub-username/my-spring-app:v1.0
+```
+
+## 6. Remove Unused Images and Containers
+
+### Remove a Specific Container
+```sh
+docker rm container_id
+```
+
+### Remove a Specific Image
+```sh
+docker rmi my-spring-app
+```
+
+### Stop and Remove All Containers
+```sh
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+```
+
+### Remove All Unused Images
+```sh
+docker image prune -a
+```
+
+## Summary
+- **Dockerfile** defines how to containerize the application.
+- **`docker build`** creates an image.
+- **`docker run`** starts a container.
+- **`docker ps`** checks running containers.
+- **`docker tag` & `docker push`** publish images to Docker Hub.
+- **`docker pull`** downloads images.
+- **`docker rm` & `docker rmi`** clean up resources.
+
+Happy Containerizing! 🚀
+
+
+
+
+
+
+
 # Deploying a Spring Boot App on Kubernetes
 
 This guide covers the steps to deploy a Spring Boot application using Kubernetes.
